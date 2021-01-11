@@ -18,7 +18,7 @@ public class Rooms {
 	@Id
 	private long roomId;
 	private String roomType;
-	private String desc;
+	private double price;
 
 	@ManyToOne
 	@JoinColumn(name = "hotelId",nullable = false)

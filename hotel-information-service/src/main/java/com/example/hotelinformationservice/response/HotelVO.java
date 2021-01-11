@@ -1,6 +1,6 @@
 package com.example.hotelinformationservice.response;
 
-import java.util.List;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import lombok.Setter;
 public class HotelVO {
 
 	private String hotelName;
-	private List<RoomsVO> roomsList;
+	private Set<String> roomTypes;
 	private String hotelDesc;
 	private String city;
 }

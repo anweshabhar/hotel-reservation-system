@@ -13,6 +13,6 @@ CREATE TABLE Rooms (
   room_Id int(18) PRIMARY KEY,
   hotel_Id int(18),
   room_Type varchar(25) NOT NULL,
-  desc varchar(100),
+  price int(18),
   CONSTRAINT rooms_fk_1 FOREIGN KEY (hotel_Id) REFERENCES Hotel_Info (hotel_Id)
 ) ;

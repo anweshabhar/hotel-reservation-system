@@ -11,4 +11,8 @@ public interface HotelInfoService {
 	HotelVO getHotelById(long hotelId);
 
 	HotelVO getHotelByNameAndCity(String hotelName, String city);
+
+	List<HotelVO> getHotelsByCity(String city);
+
+	boolean updateInventory(long hotelId, String roomType);
 }
