@@ -7,7 +7,8 @@ import lombok.Setter;
 @Setter
 public class AvailabilityRequest {
 
-	private String hotelId;
+	private String hotelName;
+	private String city;
 	private String checkInDt;
 	private String checkOutDt;
 	private int roomCount;
