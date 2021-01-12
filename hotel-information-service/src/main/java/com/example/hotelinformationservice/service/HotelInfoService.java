@@ -1,13 +1,14 @@
 package com.example.hotelinformationservice.service;
 
 import java.util.List;
-import java.util.Map;
 
+import com.example.hotelinformationservice.response.HotelInfoResponseVO;
 import com.example.hotelinformationservice.response.HotelVO;
+import com.example.hotelinformationservice.response.RoomCountResponseVO;
 
 public interface HotelInfoService {
 
-	List<HotelVO> getAllHotels();
+	List<HotelInfoResponseVO> getAllHotels();
 
 	HotelVO getHotelById(long hotelId);
 
@@ -15,5 +16,5 @@ public interface HotelInfoService {
 
 	List<HotelVO> getHotelsByCity(String city);
 
-	Map<String, Long> getRoomCount(String hotelName, String city);
+	List<RoomCountResponseVO> getRoomCount(String hotelName, String city);
 }

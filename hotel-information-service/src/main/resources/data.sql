@@ -16,4 +16,7 @@ INSERT INTO Rooms (room_Id,hotel_Id, room_Type, price, max_guest_allowed ) VALUE
   (9, 3, 'RunOfTheHouse',1000, 2),
   (10, 1, 'KingBed', 2000, 3),
   (11, 1, 'DoubleQueen', 3000, 4),
-  (12, 1, 'RunOfTheHouse', 1000, 2);
+  (12, 1, 'RunOfTheHouse', 1000, 2),
+  (13, 4, 'KingBed', 2000, 3),
+  (14, 4, 'DoubleQueen', 3000, 4),
+  (15, 4, 'RunOfTheHouse', 1000, 2);

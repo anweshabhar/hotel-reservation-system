@@ -1,7 +1,6 @@
 package com.example.hotelinformationservice.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.hotelinformationservice.response.HotelInfoResponseVO;
 import com.example.hotelinformationservice.response.HotelVO;
+import com.example.hotelinformationservice.response.RoomCountResponseVO;
 import com.example.hotelinformationservice.service.HotelInfoService;
 
 import io.swagger.annotations.ApiOperation;
@@ -22,7 +23,7 @@ public class HotelInformationController {
 	private HotelInfoService hotelInfoService;
 
 	@ApiOperation(value = "Get list of all hotels by city")
-	@GetMapping(value = "/getHotelsByCity/{city}", produces = "application/json")
+	@GetMapping(value = "/{city}", produces = "application/json")
 	public List<HotelVO> getHotelsByCity(@PathVariable String city){
 		return hotelInfoService.getHotelsByCity(city);
 	}
@@ -34,14 +35,14 @@ public class HotelInformationController {
 	}
 
 	@ApiOperation(value = "Get list of all hotels")
-	@GetMapping(value = "/getAllHotels", produces = "application/json")
-	public List<HotelVO> getAllHotels(){
+	@GetMapping(value = "/allHotels", produces = "application/json")
+	public List<HotelInfoResponseVO> getAllHotels(){
 		return hotelInfoService.getAllHotels();
 	}
 
 	@ApiOperation(value = "Get room count for each type for given hotel name and city")
-	@GetMapping(value = "/getRoomCount/{hotelName}/{city}")
-	public Map<String, Long> getRoomCount(@PathVariable String hotelName, @PathVariable String city) {
+	@GetMapping(value = "/roomCount/{hotelName}/{city}")
+	public List<RoomCountResponseVO> getRoomCount(@PathVariable String hotelName, @PathVariable String city) {
 		return hotelInfoService.getRoomCount(hotelName, city);
 	}
 

@@ -1,5 +1,6 @@
 package com.example.hotelinformationservice.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,9 @@ import com.example.hotelinformationservice.entity.HotelInfo;
 import com.example.hotelinformationservice.entity.Rooms;
 import com.example.hotelinformationservice.mapper.HotelInfoMapper;
 import com.example.hotelinformationservice.repository.HotelRepository;
+import com.example.hotelinformationservice.response.HotelInfoResponseVO;
 import com.example.hotelinformationservice.response.HotelVO;
+import com.example.hotelinformationservice.response.RoomCountResponseVO;
 
 @Service
 public class HotelInfoServiceImpl implements HotelInfoService {
@@ -27,16 +30,24 @@ public class HotelInfoServiceImpl implements HotelInfoService {
 	private HotelInfoMapper mapper;
 
 	@Override
-	public List<HotelVO> getAllHotels() {
+	public List<HotelInfoResponseVO> getAllHotels() {
 		List<HotelInfo> lst = hotelRepo.findAll();
+		List<HotelInfoResponseVO> respList = new ArrayList<>();
 		if(!CollectionUtils.isEmpty(lst)) {
-			return lst.stream().map(l -> {
+			List<HotelVO> voList = lst.stream().map(l -> {
 				HotelVO vo = mapper.mapToHotelVO(l);
 				fetchRoomTypes(l, vo);
 				return vo;
 			}).collect(Collectors.toList());
+			Map<String,List<HotelVO>> cityWiseMap = voList.stream().collect(Collectors.groupingBy(HotelVO::getCity));
+			cityWiseMap.forEach((k,v) -> {
+				HotelInfoResponseVO respVO = new HotelInfoResponseVO();
+				respVO.setCity(k);
+				respVO.setHotelList(v);
+				respList.add(respVO);
+			});
 		}
-		return Collections.emptyList();
+		return respList;
 	}
 
 	@Override
@@ -79,13 +90,19 @@ public class HotelInfoServiceImpl implements HotelInfoService {
 
 
 	@Override
-	public Map<String,Long> getRoomCount(String hotelName, String city) {
-		Map<String,Long> map = null;
+	public List<RoomCountResponseVO> getRoomCount(String hotelName, String city) {
+		List<RoomCountResponseVO> lst = new ArrayList<>();
 		HotelInfo hotelInfo = hotelRepo.findByHotelNameAndCity(hotelName, city);
 		if(null != hotelInfo) {
-			map = hotelInfo.getRoomsList().stream().collect(Collectors.groupingBy(Rooms::getRoomType,Collectors.counting()));
+			Map<String,Long> map = hotelInfo.getRoomsList().stream().collect(Collectors.groupingBy(Rooms::getRoomType,Collectors.counting()));
+			map.forEach( (k,v) -> {
+				RoomCountResponseVO vo = new RoomCountResponseVO();
+				vo.setRoomType(k);
+				vo.setRoomCount(v);
+				lst.add(vo);
+			});
 		}
-		return map;
+		return lst;
 	}
 
 }
