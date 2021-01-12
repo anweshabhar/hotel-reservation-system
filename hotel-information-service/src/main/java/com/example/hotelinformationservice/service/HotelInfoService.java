@@ -1,6 +1,7 @@
 package com.example.hotelinformationservice.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.example.hotelinformationservice.response.HotelVO;
 
@@ -14,5 +15,5 @@ public interface HotelInfoService {
 
 	List<HotelVO> getHotelsByCity(String city);
 
-	boolean updateInventory(long hotelId, String roomType);
+	Map<String, Long> getRoomCount(String hotelName, String city);
 }

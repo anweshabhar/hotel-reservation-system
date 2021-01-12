@@ -14,5 +14,6 @@ CREATE TABLE Rooms (
   hotel_Id int(18),
   room_Type varchar(25) NOT NULL,
   price int(18),
+  max_guest_allowed int(18),
   CONSTRAINT rooms_fk_1 FOREIGN KEY (hotel_Id) REFERENCES Hotel_Info (hotel_Id)
 ) ;

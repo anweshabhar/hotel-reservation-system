@@ -19,6 +19,7 @@ public class Rooms {
 	private long roomId;
 	private String roomType;
 	private double price;
+	private int maxGuestAllowed;
 
 	@ManyToOne
 	@JoinColumn(name = "hotelId",nullable = false)

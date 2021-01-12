@@ -7,7 +7,9 @@ import lombok.Setter;
 @Setter
 public class RoomsVO {
 
+	private long roomId;
 	private String roomType;
-	private String desc;
+	private double price;
+	private int maxGuestAllowed;
 
 }

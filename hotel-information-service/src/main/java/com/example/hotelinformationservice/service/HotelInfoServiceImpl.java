@@ -2,6 +2,7 @@ package com.example.hotelinformationservice.service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -11,10 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.example.hotelinformationservice.entity.HotelInfo;
-import com.example.hotelinformationservice.entity.HotelInventory;
 import com.example.hotelinformationservice.entity.Rooms;
 import com.example.hotelinformationservice.mapper.HotelInfoMapper;
-import com.example.hotelinformationservice.repository.HotelInventoryRepository;
 import com.example.hotelinformationservice.repository.HotelRepository;
 import com.example.hotelinformationservice.response.HotelVO;
 
@@ -23,9 +22,6 @@ public class HotelInfoServiceImpl implements HotelInfoService {
 
 	@Autowired
 	private HotelRepository hotelRepo;
-
-	@Autowired
-	private HotelInventoryRepository inventoryRepo;
 
 	@Autowired
 	private HotelInfoMapper mapper;
@@ -81,12 +77,15 @@ public class HotelInfoServiceImpl implements HotelInfoService {
 		vo.setRoomTypes(roomTypes);
 	}
 
+
 	@Override
-	public boolean updateInventory(long hotelId, String roomType) {
-		HotelInventory roomInventory = inventoryRepo.findByHotelIdAndRoomType(hotelId, roomType);
-		roomInventory.setNoOfvacancies(roomInventory.getNoOfvacancies()-1);
-		inventoryRepo.save(roomInventory);
-		return true;
+	public Map<String,Long> getRoomCount(String hotelName, String city) {
+		Map<String,Long> map = null;
+		HotelInfo hotelInfo = hotelRepo.findByHotelNameAndCity(hotelName, city);
+		if(null != hotelInfo) {
+			map = hotelInfo.getRoomsList().stream().collect(Collectors.groupingBy(Rooms::getRoomType,Collectors.counting()));
+		}
+		return map;
 	}
 
 }

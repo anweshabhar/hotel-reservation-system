@@ -1,13 +1,12 @@
 package com.example.hotelinformationservice.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.hotelinformationservice.response.HotelVO;
@@ -40,11 +39,10 @@ public class HotelInformationController {
 		return hotelInfoService.getAllHotels();
 	}
 
-
-	@ApiOperation(value = "Update hotel inventory")
-	@PostMapping(value = "/updateInventory")
-	public boolean updateInventory(@RequestParam long hotelId, @RequestParam String roomType) {
-		return hotelInfoService.updateInventory(hotelId, roomType);
+	@ApiOperation(value = "Get room count for each type for given hotel name and city")
+	@GetMapping(value = "/getRoomCount/{hotelName}/{city}")
+	public Map<String, Long> getRoomCount(@PathVariable String hotelName, @PathVariable String city) {
+		return hotelInfoService.getRoomCount(hotelName, city);
 	}
 
 }
