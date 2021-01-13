@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -19,6 +20,7 @@ import com.example.hotelinformationservice.repository.HotelRepository;
 import com.example.hotelinformationservice.response.HotelInfoResponseVO;
 import com.example.hotelinformationservice.response.HotelVO;
 import com.example.hotelinformationservice.response.RoomCountResponseVO;
+import com.example.hotelinformationservice.response.RoomsVO;
 
 @Service
 public class HotelInfoServiceImpl implements HotelInfoService {
@@ -104,5 +106,17 @@ public class HotelInfoServiceImpl implements HotelInfoService {
 		}
 		return lst;
 	}
+
+	@Override
+	public List<RoomsVO> getRoomDetails(String roomType, String hotelName, String city) {
+		List<RoomsVO> resp = new ArrayList<>();
+		HotelInfo hotelInfo = hotelRepo.findByHotelNameAndCity(hotelName, city);
+		if(null!=hotelInfo) {
+			resp = hotelInfo.getRoomsList().stream().filter(r->StringUtils.equals(r.getRoomType(), roomType))
+					.map(r -> mapper.mapToRoomsVO(r)).collect(Collectors.toList());
+		}
+		return resp;
+	}
+
 
 }

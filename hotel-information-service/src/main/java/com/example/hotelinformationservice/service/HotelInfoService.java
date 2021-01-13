@@ -5,6 +5,7 @@ import java.util.List;
 import com.example.hotelinformationservice.response.HotelInfoResponseVO;
 import com.example.hotelinformationservice.response.HotelVO;
 import com.example.hotelinformationservice.response.RoomCountResponseVO;
+import com.example.hotelinformationservice.response.RoomsVO;
 
 public interface HotelInfoService {
 
@@ -17,4 +18,6 @@ public interface HotelInfoService {
 	List<HotelVO> getHotelsByCity(String city);
 
 	List<RoomCountResponseVO> getRoomCount(String hotelName, String city);
+
+	List<RoomsVO> getRoomDetails(String roomType, String hotelName, String city);
 }
