@@ -11,5 +11,5 @@ public class AvailabilityRequest {
 	private String city;
 	private String checkInDt;
 	private String checkOutDt;
-	private int roomCount;
+	private String roomType;
 }

@@ -22,9 +22,11 @@ public class Reservation {
 	private long guestId;
 	private Date checkIn;
 	private Date checkOut;
+	private String hotelName;
+	private String city;
 	private Date createdOn;
 	private double price;
-	//private String status;
+	private String roomType;
 
 
 }
