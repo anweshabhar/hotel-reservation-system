@@ -1,5 +1,7 @@
 package com.example.reservationservice.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +13,8 @@ import com.example.reservationservice.request.AvailabilityRequest;
 import com.example.reservationservice.request.ReservationRequest;
 import com.example.reservationservice.service.ReservationService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 @RequestMapping("/reservation")
 public class ReservationController {
@@ -18,14 +22,16 @@ public class ReservationController {
 	@Autowired
 	private ReservationService reservationService;
 
-	@PostMapping(value = "/reserve", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String bookReservation(@RequestBody ReservationRequest req) {
-		return null;
+	@ApiOperation(value = "api to Book reservation")
+	@PostMapping(value = "/bookReservation", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String bookReservation(@RequestBody ReservationRequest reservationRequest) {
+		return reservationService.bookReservation(reservationRequest);
 	}
 
+	@ApiOperation(value = "api to get available room id's")
 	@PostMapping(value = "/availableRoomCount", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public int getAvailableRoomCount(@RequestBody AvailabilityRequest availabilityRequest ) {
-		return reservationService.getAvailableRoomCount(availabilityRequest);
+	public List<Long> getAvailableRoomCount(@RequestBody AvailabilityRequest availabilityRequest ) {
+		return reservationService.getAvailableRoomID(availabilityRequest);
 	}
 
 }

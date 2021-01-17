@@ -5,6 +5,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -17,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.example.reservationservice.request.AvailabilityRequest;
+import com.example.reservationservice.request.ReservationRequest;
 import com.example.reservationservice.service.ReservationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -39,7 +43,9 @@ class ReservationControllerTest {
 		availabilityRequest.setCheckInDt("16-01-2020");
 		availabilityRequest.setCheckOutDt("17-01-2021");
 		ObjectMapper mapper = new ObjectMapper();
-		when(reservationService.getAvailableRoomCount(Mockito.any(AvailabilityRequest.class))).thenReturn(1);
+		List<Long> resp = new ArrayList<>();
+		resp.add(1L);
+		when(reservationService.getAvailableRoomID(Mockito.any(AvailabilityRequest.class))).thenReturn(resp);
 		try {
 			MvcResult mvcResult = mockMvc.perform(post("/reservation/availableRoomCount").contentType(MediaType.APPLICATION_JSON_VALUE)
 					.content(mapper.writeValueAsString(availabilityRequest)))
@@ -50,6 +56,25 @@ class ReservationControllerTest {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Test
+	void testBookReservation() {
+		ReservationRequest request = new ReservationRequest();
+		//ReservationResponse resp = new ReservationResponse();
+		//resp.setRoomId(1);
+		//resp.setStatus("success");
+		when(reservationService.bookReservation(Mockito.any(ReservationRequest.class))).thenReturn("success");
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			MvcResult mvcResult = mockMvc.perform(post("/reservation/bookReservation").contentType(MediaType.APPLICATION_JSON_VALUE)
+					.content(mapper.writeValueAsString(request)))
+					.andExpect(status().isOk())
+					.andReturn();
+			assertEquals("success",mvcResult.getResponse().getContentAsString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

@@ -56,8 +56,8 @@ class ReservationServiceImplTest {
 		availabilityRequest.setCheckOutDt("20-01-2021");
 		when(feignClient.getRoomDetails("Novotel","Kolkata","DoubleQueen")).thenReturn(roomDTO);
 		when(repo.findReservation(Mockito.any(), Mockito.any())).thenReturn(reservList);
-		int response = reservationServiceImpl.getAvailableRoomCount(availabilityRequest);
-		assertEquals(1, response);
+		List<Long> response = reservationServiceImpl.getAvailableRoomID(availabilityRequest);
+		assertEquals(2L, response.get(0));
 	}
 
 }

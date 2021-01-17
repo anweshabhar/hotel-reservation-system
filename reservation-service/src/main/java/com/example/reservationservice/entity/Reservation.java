@@ -1,7 +1,9 @@
 package com.example.reservationservice.entity;
 
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,7 +21,7 @@ public class Reservation {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	private long roomId;
-	private long guestId;
+	private String userId;
 	private Date checkIn;
 	private Date checkOut;
 	private String hotelName;
@@ -27,6 +29,8 @@ public class Reservation {
 	private Date createdOn;
 	private double price;
 	private String roomType;
+	@ElementCollection
+	private List<Long> guestId;
 
 
 }
