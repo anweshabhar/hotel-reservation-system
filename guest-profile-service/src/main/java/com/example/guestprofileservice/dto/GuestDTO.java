@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class GuestDTO {
 
+	private long guestId;
 	private String name;
 	private long phoneNo;
 	private AddressDTO address;

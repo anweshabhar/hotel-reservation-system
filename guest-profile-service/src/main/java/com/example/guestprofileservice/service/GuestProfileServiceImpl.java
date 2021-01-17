@@ -1,6 +1,8 @@
 package com.example.guestprofileservice.service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -23,11 +25,15 @@ public class GuestProfileServiceImpl implements GuestProfileService{
 
 	@Override
 	@Transactional
-	public void addGuest(String user, GuestDTO guestDTO) {
-		GuestProfile guestEntity = mapper.mapToGuestEntity(guestDTO);
-		guestEntity.setCreatedBy(user);
-		guestEntity.setCreatedOn(new Date());
-		repository.save(guestEntity);
+	public void addGuest(String user, List<GuestDTO> guestDTO) {
+		List<GuestProfile> guestEntity = new ArrayList<>();
+		guestDTO.forEach(g -> {
+			GuestProfile guestProfile = mapper.mapToGuestEntity(g);
+			guestProfile.setCreatedBy(user);
+			guestProfile.setCreatedOn(new Date());
+			guestEntity.add(guestProfile);
+		});
+		repository.saveAll(guestEntity);
 
 	}
 

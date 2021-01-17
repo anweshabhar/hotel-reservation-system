@@ -1,5 +1,7 @@
 package com.example.guestprofileservice.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +20,8 @@ public class GuestProfileController {
 	private GuestProfileService guestProfileService;
 
 	@PostMapping(value = "/addGuest", consumes = "application/json")
-	public void addGuest(@RequestParam String user, @RequestBody GuestDTO guestDTO) {
-		guestProfileService.addGuest(user, guestDTO);
+	public void addGuest(@RequestParam String user, @RequestBody List<GuestDTO> guestDTOlist) {
+		guestProfileService.addGuest(user, guestDTOlist);
 	}
 
 }
