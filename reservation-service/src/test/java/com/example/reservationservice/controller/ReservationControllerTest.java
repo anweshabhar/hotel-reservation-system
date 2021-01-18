@@ -19,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import com.example.reservationservice.exception.ReservationServiceException;
 import com.example.reservationservice.request.AvailabilityRequest;
 import com.example.reservationservice.request.ReservationRequest;
 import com.example.reservationservice.service.ReservationService;
@@ -35,7 +36,7 @@ class ReservationControllerTest {
 	private ReservationService reservationService;
 
 	@Test
-	void testCheckAvailability() {
+	void testCheckAvailability() throws ReservationServiceException {
 		AvailabilityRequest availabilityRequest = new AvailabilityRequest();
 		availabilityRequest.setRoomType("KingBed");
 		availabilityRequest.setCity("Kolkata");
@@ -59,7 +60,7 @@ class ReservationControllerTest {
 	}
 
 	@Test
-	void testBookReservation() {
+	void testBookReservation() throws ReservationServiceException {
 		ReservationRequest request = new ReservationRequest();
 		//ReservationResponse resp = new ReservationResponse();
 		//resp.setRoomId(1);

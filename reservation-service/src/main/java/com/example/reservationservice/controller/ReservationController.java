@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.reservationservice.exception.ReservationServiceException;
 import com.example.reservationservice.request.AvailabilityRequest;
 import com.example.reservationservice.request.ReservationRequest;
 import com.example.reservationservice.service.ReservationService;
@@ -24,13 +25,13 @@ public class ReservationController {
 
 	@ApiOperation(value = "api to Book reservation")
 	@PostMapping(value = "/bookReservation", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String bookReservation(@RequestBody ReservationRequest reservationRequest) {
+	public String bookReservation(@RequestBody ReservationRequest reservationRequest) throws ReservationServiceException {
 		return reservationService.bookReservation(reservationRequest);
 	}
 
 	@ApiOperation(value = "api to get available room id's")
 	@PostMapping(value = "/availableRoomCount", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public List<Long> getAvailableRoomCount(@RequestBody AvailabilityRequest availabilityRequest ) {
+	public List<Long> getAvailableRoomCount(@RequestBody AvailabilityRequest availabilityRequest ) throws ReservationServiceException {
 		return reservationService.getAvailableRoomID(availabilityRequest);
 	}
 

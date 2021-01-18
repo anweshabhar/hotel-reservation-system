@@ -18,6 +18,7 @@ import com.example.reservationservice.api.feign.HotelRoomFeignClient;
 import com.example.reservationservice.dto.GuestDTO;
 import com.example.reservationservice.dto.RoomDTO;
 import com.example.reservationservice.entity.Reservation;
+import com.example.reservationservice.exception.ReservationServiceException;
 import com.example.reservationservice.repository.ReservationRepository;
 import com.example.reservationservice.request.AvailabilityRequest;
 import com.example.reservationservice.request.ReservationRequest;
@@ -34,13 +35,15 @@ public class ReservationServiceImpl implements ReservationService {
 	private static final Logger log = LoggerFactory.getLogger(ReservationServiceImpl.class);
 
 	@Override
-	public List<Long> getAvailableRoomID(AvailabilityRequest request) {
+	public List<Long> getAvailableRoomID(AvailabilityRequest request) throws ReservationServiceException {
 		List<Long> roomIdList = new ArrayList<>();
 		List<RoomDTO> roomDTOlist = hotelRoomFeignClient.getRoomDetails(request.getHotelName(), request.getCity(), request.getRoomType());
 
 		if(!CollectionUtils.isEmpty(roomDTOlist)) {
 			Date checkIn = getParsedDate(request.getCheckInDt());
 			Date checkOut = getParsedDate(request.getCheckOutDt());
+			if(checkIn.before(new Date()) || checkOut.before(new Date()))
+				throw new ReservationServiceException("Check-in date should be greater than current date");
 			List<Reservation> reservList = repo.findReservation(checkIn, checkOut);
 			List<Long> reservedIdList = Collections.emptyList();
 			if(!CollectionUtils.isEmpty(reservList)) {
@@ -63,19 +66,19 @@ public class ReservationServiceImpl implements ReservationService {
 
 	}
 
-	private Date getParsedDate(String date) {
+	private Date getParsedDate(String date) throws ReservationServiceException {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		Date parsedDate=null;
 		try {
 			parsedDate = sdf.parse(date);
 		} catch (ParseException e) {
-			log.info("Unable to parse date");
+			throw new ReservationServiceException("Unable to parse date.");
 		}
 		return parsedDate;
 	}
 
 	@Override
-	public String bookReservation(ReservationRequest reservationRequest) {
+	public String bookReservation(ReservationRequest reservationRequest) throws ReservationServiceException {
 		Reservation reservation = mapToReservationEntity(reservationRequest);
 		List<GuestDTO> guestDTOlist = new ArrayList<>();
 		reservationRequest.getGuestInfo().forEach(g -> {
@@ -95,7 +98,7 @@ public class ReservationServiceImpl implements ReservationService {
 		return "success";
 	}
 
-	private Reservation mapToReservationEntity(ReservationRequest reservationRequest) {
+	private Reservation mapToReservationEntity(ReservationRequest reservationRequest) throws ReservationServiceException {
 		Reservation reservation = new Reservation();
 		reservation.setUserId(reservationRequest.getUserId());
 		reservation.setCity(reservationRequest.getCity());

@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.reservationservice.api.feign.HotelRoomFeignClient;
 import com.example.reservationservice.dto.RoomDTO;
 import com.example.reservationservice.entity.Reservation;
+import com.example.reservationservice.exception.ReservationServiceException;
 import com.example.reservationservice.repository.ReservationRepository;
 import com.example.reservationservice.request.AvailabilityRequest;
 
@@ -32,7 +33,7 @@ class ReservationServiceImplTest {
 	private ReservationRepository repo;
 
 	@Test
-	void testCheckAvailability() {
+	void testCheckAvailability() throws ReservationServiceException {
 		List<RoomDTO> roomDTO = new ArrayList<>();
 		RoomDTO dto1 = new RoomDTO();
 		dto1.setRoomId(2);
