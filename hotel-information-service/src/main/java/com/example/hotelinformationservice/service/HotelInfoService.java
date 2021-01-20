@@ -15,8 +15,6 @@ public interface HotelInfoService {
 
 	HotelVO getHotelByNameAndCity(String hotelName, String city);
 
-	List<HotelVO> getHotelsByCity(String city);
-
 	List<RoomCountResponseVO> getRoomCount(String hotelName, String city);
 
 	List<RoomsVO> getRoomDetails(String roomType, String hotelName, String city);

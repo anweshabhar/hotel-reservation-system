@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 public class HotelVO {
 
+	private long hotelId;
 	private String hotelName;
 	private Set<String> roomTypes;
 	private String hotelDesc;
-	private String city;
 }

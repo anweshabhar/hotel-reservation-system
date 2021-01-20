@@ -1,7 +1,6 @@
 package com.example.hotelinformationservice.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,6 +14,7 @@ import org.springframework.util.CollectionUtils;
 
 import com.example.hotelinformationservice.entity.HotelInfo;
 import com.example.hotelinformationservice.entity.Rooms;
+import com.example.hotelinformationservice.exception.HotelNotFoundException;
 import com.example.hotelinformationservice.mapper.HotelInfoMapper;
 import com.example.hotelinformationservice.repository.HotelRepository;
 import com.example.hotelinformationservice.response.HotelInfoResponseVO;
@@ -24,6 +24,8 @@ import com.example.hotelinformationservice.response.RoomsVO;
 
 @Service
 public class HotelInfoServiceImpl implements HotelInfoService {
+
+	private static final String HOTEL_NOT_FOUND = "Hotel not found";
 
 	@Autowired
 	private HotelRepository hotelRepo;
@@ -36,16 +38,16 @@ public class HotelInfoServiceImpl implements HotelInfoService {
 		List<HotelInfo> lst = hotelRepo.findAll();
 		List<HotelInfoResponseVO> respList = new ArrayList<>();
 		if(!CollectionUtils.isEmpty(lst)) {
-			List<HotelVO> voList = lst.stream().map(l -> {
-				HotelVO vo = mapper.mapToHotelVO(l);
-				fetchRoomTypes(l, vo);
-				return vo;
-			}).collect(Collectors.toList());
-			Map<String,List<HotelVO>> cityWiseMap = voList.stream().collect(Collectors.groupingBy(HotelVO::getCity));
+			Map<String, List<HotelInfo>> cityWiseMap = lst.stream().collect(Collectors.groupingBy(HotelInfo::getCity));
 			cityWiseMap.forEach((k,v) -> {
 				HotelInfoResponseVO respVO = new HotelInfoResponseVO();
 				respVO.setCity(k);
-				respVO.setHotelList(v);
+				List<HotelVO> voList = v.stream().map(l -> {
+					HotelVO vo = mapper.mapToHotelVO(l);
+					fetchRoomTypes(l, vo);
+					return vo;
+				}).collect(Collectors.toList());
+				respVO.setHotelList(voList);
 				respList.add(respVO);
 			});
 		}
@@ -60,28 +62,20 @@ public class HotelInfoServiceImpl implements HotelInfoService {
 			fetchRoomTypes(opt.get(), vo);
 			return vo;
 		}
-		return null;
+		else
+			throw new HotelNotFoundException(HOTEL_NOT_FOUND);
 	}
 
 	@Override
 	public HotelVO getHotelByNameAndCity(String hotelName, String city) {
 		HotelInfo hotelInfo = hotelRepo.findByHotelNameAndCity(hotelName, city);
-		HotelVO vo = mapper.mapToHotelVO(hotelInfo);
-		fetchRoomTypes(hotelInfo, vo);
-		return vo;
-	}
+		if(null!=hotelInfo) {
+			HotelVO vo = mapper.mapToHotelVO(hotelInfo);
+			fetchRoomTypes(hotelInfo, vo);
+			return vo;
+		}else
+			throw new HotelNotFoundException(HOTEL_NOT_FOUND);
 
-	@Override
-	public List<HotelVO> getHotelsByCity(String city) {
-		List<HotelInfo> hotelInfoList = hotelRepo.findByCity(city);
-		if(!CollectionUtils.isEmpty(hotelInfoList)) {
-			return hotelInfoList.stream().map(h -> {
-				HotelVO vo = mapper.mapToHotelVO(h);
-				fetchRoomTypes(h, vo);
-				return vo;
-			}).collect(Collectors.toList());
-		}
-		return Collections.emptyList();
 	}
 
 	private void fetchRoomTypes(HotelInfo h, HotelVO vo) {
@@ -103,7 +97,8 @@ public class HotelInfoServiceImpl implements HotelInfoService {
 				vo.setRoomCount(v);
 				lst.add(vo);
 			});
-		}
+		}else
+			throw new HotelNotFoundException(HOTEL_NOT_FOUND);
 		return lst;
 	}
 
