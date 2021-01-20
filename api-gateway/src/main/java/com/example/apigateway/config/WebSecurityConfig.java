@@ -36,6 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.antMatchers("/user/*").permitAll()
 		.antMatchers("/").permitAll()
 		.antMatchers("/h2-console/**").permitAll()
+		.antMatchers("/hotel-information-service/**").permitAll()
 		.anyRequest().authenticated()
 		.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.headers().frameOptions().disable();

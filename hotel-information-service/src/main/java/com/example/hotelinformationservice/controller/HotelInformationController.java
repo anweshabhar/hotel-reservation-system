@@ -19,7 +19,7 @@ import com.example.hotelinformationservice.service.HotelInfoService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("/hotel")
+@RequestMapping("/hotels")
 public class HotelInformationController {
 
 	@Autowired
@@ -38,19 +38,19 @@ public class HotelInformationController {
 	}
 
 	@ApiOperation(value = "Get list of all hotels")
-	@GetMapping(value = "/allHotels", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<HotelInfoResponseVO> getAllHotels(){
 		return hotelInfoService.getAllHotels();
 	}
 
 	@ApiOperation(value = "Get room count for each type for given hotel name and city")
-	@GetMapping(value = "/roomCount/{hotelName}/{city}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/room/count/{hotelName}/{city}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<RoomCountResponseVO> getRoomCount(@PathVariable String hotelName, @PathVariable String city) {
 		return hotelInfoService.getRoomCount(hotelName, city);
 	}
 
 	@ApiOperation(value = "Get room details for given hotel, city and room type")
-	@GetMapping(value = "/roomDetails", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/room/details", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<RoomsVO> getRoomDetails(@RequestParam String hotelName, @RequestParam String city, @RequestParam String roomType){
 		return hotelInfoService.getRoomDetails(roomType,hotelName,city);
 	}
