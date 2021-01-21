@@ -11,6 +11,8 @@ public class GuestDTO {
 	private String name;
 	private long phoneNo;
 	private AddressDTO address;
+	private String createdBy;
+	private String createdOn;
 
 	@Getter
 	@Setter
