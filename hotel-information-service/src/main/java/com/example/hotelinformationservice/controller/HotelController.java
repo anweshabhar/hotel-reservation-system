@@ -17,7 +17,7 @@ import com.example.hotelinformationservice.response.RoomsVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api
+@Api(value = "Api operations related to hotel information service ")
 @RequestMapping("/hotels")
 public interface HotelController {
 

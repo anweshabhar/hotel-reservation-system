@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.hotelinformationservice.entity.HotelInfo;
 import com.example.hotelinformationservice.entity.Rooms;
+import com.example.hotelinformationservice.exception.HotelNotFoundException;
 import com.example.hotelinformationservice.mapper.HotelInfoMapper;
 import com.example.hotelinformationservice.repository.HotelRepository;
 import com.example.hotelinformationservice.response.HotelInfoResponseVO;
@@ -82,6 +84,14 @@ class HotelInfoServiceImplTest {
 	}
 
 	@Test
+	void testGetHotelById_Exception() {
+		when(hotelRepo.findById(1l)).thenReturn(Optional.empty());
+		Assertions.assertThrows(HotelNotFoundException.class, () -> {
+			service.getHotelById(1);
+		});
+	}
+
+	@Test
 	void testGetHotelByNameAndCity() {
 		when(hotelRepo.findByHotelNameAndCity(Mockito.anyString(), Mockito.anyString())).thenReturn(info);
 		when(mapper.mapToHotelVO(Mockito.any(HotelInfo.class))).thenReturn(vo);
@@ -90,10 +100,26 @@ class HotelInfoServiceImplTest {
 	}
 
 	@Test
+	void testGetHotelByNameAndCity_Exception() {
+		when(hotelRepo.findByHotelNameAndCity(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
+		Assertions.assertThrows(HotelNotFoundException.class, () -> {
+			service.getHotelByNameAndCity("Taj", "Mumbai");
+		});
+	}
+
+	@Test
 	void testGetRoomCount() {
 		when(hotelRepo.findByHotelNameAndCity(Mockito.anyString(), Mockito.anyString())).thenReturn(info);
 		List<RoomCountResponseVO> resp = service.getRoomCount("Taj", "Mumbai");
 		assertEquals(1, resp.size());
+	}
+
+	@Test
+	void testGetRoomCount_Exception() {
+		when(hotelRepo.findByHotelNameAndCity(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
+		Assertions.assertThrows(HotelNotFoundException.class, () -> {
+			service.getRoomCount("Taj", "Mumbai");
+		});
 	}
 
 	@Test
