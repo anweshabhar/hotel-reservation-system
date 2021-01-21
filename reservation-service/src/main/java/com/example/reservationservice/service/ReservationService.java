@@ -2,14 +2,19 @@ package com.example.reservationservice.service;
 
 import java.util.List;
 
-import com.example.reservationservice.exception.ReservationServiceException;
 import com.example.reservationservice.request.AvailabilityRequest;
 import com.example.reservationservice.request.ReservationRequest;
+import com.example.reservationservice.response.ReservationDetailResponse;
+import com.example.reservationservice.response.ReservationResponse;
 
 public interface ReservationService {
 
-	List<Long> getAvailableRoomID(AvailabilityRequest availabilityRequest) throws ReservationServiceException;
+	List<Long> getAvailableRoomID(AvailabilityRequest availabilityRequest);
 
-	String bookReservation(ReservationRequest reservationRequest) throws ReservationServiceException;
+	ReservationResponse bookReservation(ReservationRequest reservationRequest);
+
+	List<ReservationDetailResponse> getReservationDetails(String user);
+
+	void cancelReservation(long reservationNo);
 
 }

@@ -15,4 +15,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 	@Query("select r from Reservation r where (r.checkIn<=?1 and r.checkOut>=?1) or (r.checkIn<?2 and r.checkOut>=?2) or"
 			+ " (r.checkIn>=?1 and r.checkIn<=?2)")
 	List<Reservation> findReservation(Date checkIn,Date checkOut);
+	List<Reservation> findByUserId(String user);
+
 }

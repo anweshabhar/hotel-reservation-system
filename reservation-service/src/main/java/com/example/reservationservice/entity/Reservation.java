@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,7 +24,9 @@ public class Reservation {
 	private long id;
 	private long roomId;
 	private String userId;
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date checkIn;
+	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private Date checkOut;
 	private String hotelName;
 	private String city;
@@ -31,6 +35,6 @@ public class Reservation {
 	private String roomType;
 	@ElementCollection
 	private List<Long> guestId;
-
+	private String status;
 
 }

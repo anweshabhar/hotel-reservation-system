@@ -13,8 +13,8 @@ public class ReservationRequest {
 	private String userId;
 	private String hotelName;
 	private String city;
-	private String checkInDate;
-	private String checkOutDate;
+	private String checkIn;
+	private String checkOut;
 	private String roomType;
 	private double price;
 	private List<GuestInfo> guestInfo;

@@ -2,37 +2,43 @@ package com.example.reservationservice.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.reservationservice.exception.ReservationServiceException;
-import com.example.reservationservice.request.AvailabilityRequest;
 import com.example.reservationservice.request.ReservationRequest;
-import com.example.reservationservice.service.ReservationService;
+import com.example.reservationservice.response.ApiResponse;
+import com.example.reservationservice.response.AvailabilityResponse;
+import com.example.reservationservice.response.ReservationDetailResponse;
+import com.example.reservationservice.response.ReservationResponse;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@RestController
+@Api(value = "Reservation service operations")
 @RequestMapping("/reservation")
-public class ReservationController {
+public interface ReservationController {
 
-	@Autowired
-	private ReservationService reservationService;
+	@ApiOperation(value = "Api to Book reservation")
+	@PostMapping(value = "/reserve", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	ApiResponse<ReservationResponse> bookReservation(@RequestBody ReservationRequest reservationRequest);
 
-	@ApiOperation(value = "api to Book reservation")
-	@PostMapping(value = "/bookReservation", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String bookReservation(@RequestBody ReservationRequest reservationRequest) throws ReservationServiceException {
-		return reservationService.bookReservation(reservationRequest);
-	}
+	@ApiOperation(value = "Api to get available room id's")
+	@GetMapping(value = "/available", produces = MediaType.APPLICATION_JSON_VALUE)
+	ApiResponse<AvailabilityResponse> getAvailableRoomCount(@RequestParam String hotelName,@RequestParam String city,@RequestParam String checkInDt,
+			@RequestParam String checkOutDt,@RequestParam String roomType);
 
-	@ApiOperation(value = "api to get available room id's")
-	@PostMapping(value = "/availableRoomCount", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public List<Long> getAvailableRoomCount(@RequestBody AvailabilityRequest availabilityRequest ) throws ReservationServiceException {
-		return reservationService.getAvailableRoomID(availabilityRequest);
-	}
+	@ApiOperation(value = "Api to get reservation details for given user")
+	@GetMapping(value = "/{user}", produces = MediaType.APPLICATION_JSON_VALUE)
+	ApiResponse<List<ReservationDetailResponse>> getReservationDetails(@PathVariable String user);
+
+	@ApiOperation(value = "Api to update reservation to cancel status")
+	@PutMapping(value = "/{user}", produces = MediaType.APPLICATION_JSON_VALUE)
+	ApiResponse<String> cancelReservation(@PathVariable long reservationNo);
 
 }
