@@ -1,5 +1,7 @@
 package com.example.guestprofileservice.controller;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -23,6 +25,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.example.guestprofileservice.dto.CardDetailDTO;
 import com.example.guestprofileservice.dto.GuestDTO;
 import com.example.guestprofileservice.dto.GuestDTO.AddressDTO;
+import com.example.guestprofileservice.exception.CardNotFoundException;
+import com.example.guestprofileservice.exception.GuestNotFoundException;
 import com.example.guestprofileservice.request.GuestRequest;
 import com.example.guestprofileservice.response.CardDetailResponse;
 import com.example.guestprofileservice.service.GuestProfileService;
@@ -82,6 +86,24 @@ class GuestProfileControllerImplTest {
 	}
 
 	@Test
+	void testGetGuest_Exception() throws Exception {
+		GuestDTO guestDTO = new GuestDTO();
+		guestDTO.setName("guest");
+		guestDTO.setGuestId(1);
+		guestDTO.setPhoneNo(123456);
+		AddressDTO addressDTO = new AddressDTO();
+		addressDTO.setCity("Mumbai");
+		addressDTO.setCountry("India");
+		addressDTO.setState("Mh");
+		guestDTO.setAddress(addressDTO);
+		when(guestProfileService.getGuest(1)).thenThrow(new GuestNotFoundException("Guest not found"));
+		mockMvc.perform(get("/guestprofile/{guestId}",1))
+		.andExpect(status().isNotFound())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof GuestNotFoundException))
+		.andExpect(result -> assertEquals("Guest not found", result.getResolvedException().getMessage()));
+	}
+
+	@Test
 	void testAddStayHistory() throws Exception {
 		doNothing().when(guestProfileService).addStayHistory("abc");
 		mockMvc.perform(post("/guestprofile/stayhistory/{user}","abc"))
@@ -112,6 +134,20 @@ class GuestProfileControllerImplTest {
 		when(guestProfileService.getCard("abc")).thenReturn(response);
 		mockMvc.perform(get("/guestprofile/card/{user}","abc"))
 		.andExpect(status().isOk()).andExpect(jsonPath("$.data.cardNo").value("12345678"));
+	}
+
+	@Test
+	void testGetCard_Exception() throws Exception {
+		CardDetailResponse response = new CardDetailResponse();
+		response.setCardNo("12345678");
+		response.setExpiryMonth("01");
+		response.setExpiryYr("2030");
+		response.setName("test user");
+		when(guestProfileService.getCard("abc")).thenThrow(new CardNotFoundException("Card not available for the user"));
+		mockMvc.perform(get("/guestprofile/card/{user}","abc"))
+		.andExpect(status().isNotFound())
+		.andExpect(result -> assertTrue(result.getResolvedException() instanceof CardNotFoundException))
+		.andExpect(result -> assertEquals("Card not available for the user", result.getResolvedException().getMessage()));
 	}
 
 }

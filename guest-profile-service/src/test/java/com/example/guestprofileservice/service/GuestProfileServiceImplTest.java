@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -130,11 +131,27 @@ class GuestProfileServiceImplTest {
 	}
 
 	@Test
+	void testGetCard_Exception() {
+		when(cardRepository.findByCreatedBy("abc")).thenReturn(Optional.empty());
+		Assertions.assertThrows(CardNotFoundException.class, () -> {
+			service.getCard("abc");
+		});
+	}
+
+	@Test
 	void testGetGuestDetails() {
 		when(repository.findByCreatedBy("abc")).thenReturn(guestProfileList);
 		when(mapper.mapToGuestDTO(Mockito.any(GuestProfile.class))).thenReturn(guestDTO);
 		List<GuestDTO> resp = service.getGuestDetails("abc");
 		assertEquals(1, resp.size());
+	}
+
+	@Test
+	void testGetGuestDetails_Exception() {
+		when(repository.findByCreatedBy("abc")).thenReturn(Collections.emptyList());
+		Assertions.assertThrows(GuestNotFoundException.class, () -> {
+			service.getGuestDetails("abc");
+		});
 	}
 
 	@Test

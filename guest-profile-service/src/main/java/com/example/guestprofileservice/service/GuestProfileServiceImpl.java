@@ -1,7 +1,6 @@
 package com.example.guestprofileservice.service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -59,10 +58,7 @@ public class GuestProfileServiceImpl implements GuestProfileService{
 			guestEntity.add(guestProfile);
 		});
 		List<GuestProfile> lst = repository.saveAll(guestEntity);
-		if(!CollectionUtils.isEmpty(lst)) {
-			return lst.stream().map(GuestProfile::getGuestId).collect(Collectors.toList());
-		}
-		return Collections.emptyList();
+		return lst.stream().map(GuestProfile::getGuestId).collect(Collectors.toList());
 	}
 
 	@Override
@@ -84,8 +80,10 @@ public class GuestProfileServiceImpl implements GuestProfileService{
 			response.setExpiryYr(opt.get().getExpiryYr());
 			response.setName(opt.get().getName());
 			return response;
+		}else {
+			throw new CardNotFoundException("Card not available for the user");
 		}
-		return null;
+
 	}
 
 	@Override
@@ -94,7 +92,9 @@ public class GuestProfileServiceImpl implements GuestProfileService{
 		if(!CollectionUtils.isEmpty(lst)) {
 			return lst.stream().map(l -> mapper.mapToGuestDTO(l)).collect(Collectors.toList());
 		}
-		return Collections.emptyList();
+		else {
+			throw new GuestNotFoundException("Guest not found for given user");
+		}
 	}
 
 	@Override
