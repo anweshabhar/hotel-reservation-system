@@ -47,6 +47,10 @@ class ReservationServiceImplTest {
 
 	@Mock
 	private ReservationMapper mapper;
+
+	@Mock
+	private RoomDetailsSvc roomDetailsSvc;
+
 	Reservation reservation = new Reservation();
 	List<Reservation> reservationList = new ArrayList<>();
 
@@ -57,6 +61,11 @@ class ReservationServiceImplTest {
 		reservation.setCheckIn(new Date());
 		reservation.setCheckOut(new Date());
 		reservation.setGuestId(Arrays.asList(1L));
+		reservation.setHotelName("Taj");
+		reservation.setCity("Mumbai");
+		reservation.setPrice(2000);
+		reservation.setRoomType("KingBed");
+		reservation.setStatus("active");
 		reservationList.add(reservation);
 
 	}
@@ -86,7 +95,8 @@ class ReservationServiceImplTest {
 		availabilityRequest.setCheckOutDt("20-06-2021");
 		ApiResponse<List<RoomDTO>> apiResponse = new ApiResponse<>();
 		apiResponse.setData(roomDTO);
-		when(feignClient.getRoomDetails("Novotel","Kolkata","DoubleQueen")).thenReturn(apiResponse);
+		//when(feignClient.getRoomDetails("Novotel","Kolkata","DoubleQueen")).thenReturn(apiResponse);
+		when(roomDetailsSvc.getRoomDetails(availabilityRequest)).thenReturn(roomDTO);
 		when(repo.findReservation(Mockito.any(), Mockito.any())).thenReturn(reservList);
 		List<Long> response = reservationServiceImpl.getAvailableRoomID(availabilityRequest);
 		assertEquals(2L, response.get(0));
@@ -121,7 +131,8 @@ class ReservationServiceImplTest {
 		ApiResponse<List<RoomDTO>> apiResponse2 = new ApiResponse<>();
 		apiResponse2.setData(roomDTOlist);
 		when(feignClient.addGuest(Mockito.anyString(), Mockito.any())).thenReturn(apiResponse);
-		when(feignClient.getRoomDetails(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(apiResponse2);
+		//when(feignClient.getRoomDetails(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(apiResponse2);
+		when(roomDetailsSvc.getRoomDetails(Mockito.any() )).thenReturn(roomDTOlist);
 		when(repo.save(Mockito.any())).thenReturn(reservation);
 		when(repo.findReservation(Mockito.any(), Mockito.any())).thenReturn(reservations);
 		when(mapper.mapToReservationEntity(Mockito.any(ReservationRequest.class))).thenReturn(reservation);
@@ -152,8 +163,8 @@ class ReservationServiceImplTest {
 		roomDTOlist.add(roomDTO);
 		ApiResponse<List<RoomDTO>> apiResponse = new ApiResponse<>();
 		apiResponse.setData(roomDTOlist);
-		when(feignClient.getRoomDetails(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(apiResponse);
-		when(repo.findReservation(Mockito.any(), Mockito.any())).thenReturn(reservations);
+		//when(feignClient.getRoomDetails(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(apiResponse);
+		//when(repo.findReservation(Mockito.any(), Mockito.any())).thenReturn(reservations);
 		when(mapper.mapToReservationEntity(Mockito.any(ReservationRequest.class))).thenReturn(reservation);
 		Assertions.assertThrows(ReservationServiceException.class, () -> {
 			reservationServiceImpl.bookReservation(reservationRequest);

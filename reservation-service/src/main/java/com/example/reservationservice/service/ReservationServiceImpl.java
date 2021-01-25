@@ -28,6 +28,10 @@ import com.example.reservationservice.response.ApiResponse;
 import com.example.reservationservice.response.ReservationDetailResponse;
 import com.example.reservationservice.response.ReservationResponse;
 
+/**
+ * @author Anwesha_Bhar
+ *
+ */
 @Service
 public class ReservationServiceImpl implements ReservationService {
 
@@ -40,13 +44,19 @@ public class ReservationServiceImpl implements ReservationService {
 	@Autowired
 	private ReservationMapper mapper;
 
+	@Autowired
+	private RoomDetailsSvc roomDetailsSvc;
+
 	private static final Logger log = LoggerFactory.getLogger(ReservationServiceImpl.class);
 
+	/**
+	 * Method to get list of available room id's
+	 */
 	@Override
 	public List<Long> getAvailableRoomID(AvailabilityRequest request) {
+		log.info("Inside getAvailableRoomID()");
 		List<Long> roomIdList = new ArrayList<>();
-		ApiResponse<List<RoomDTO>> apiResponse = feignClient.getRoomDetails(request.getHotelName(), request.getCity(), request.getRoomType());
-		List<RoomDTO> roomDTOlist = apiResponse.getData();
+		List<RoomDTO> roomDTOlist = roomDetailsSvc.getRoomDetails(request);
 		if(!CollectionUtils.isEmpty(roomDTOlist)) {
 			Date checkIn = getParsedDate(request.getCheckInDt());
 			Date checkOut = getParsedDate(request.getCheckOutDt());
@@ -68,6 +78,10 @@ public class ReservationServiceImpl implements ReservationService {
 
 	}
 
+
+
+
+
 	private void validateDate(Date checkIn, Date checkOut) {
 		if(checkIn.before(new Date()) || checkOut.before(new Date()))
 			throw new ReservationServiceException("Check-in date should be greater than current date");
@@ -84,6 +98,9 @@ public class ReservationServiceImpl implements ReservationService {
 		return parsedDate;
 	}
 
+	/**
+	 * Method to book reservation returning reservation number in response
+	 */
 	@Override
 	@Transactional
 	public ReservationResponse bookReservation(ReservationRequest reservationRequest) {

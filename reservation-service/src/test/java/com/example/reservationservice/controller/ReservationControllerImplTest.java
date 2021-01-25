@@ -1,5 +1,7 @@
 package com.example.reservationservice.controller;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,8 +22,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.example.reservationservice.exception.ReservationServiceException;
 import com.example.reservationservice.request.AvailabilityRequest;
 import com.example.reservationservice.request.ReservationRequest;
+import com.example.reservationservice.request.ReservationRequest.AddressInfo;
+import com.example.reservationservice.request.ReservationRequest.GuestInfo;
 import com.example.reservationservice.response.ReservationDetailResponse;
 import com.example.reservationservice.response.ReservationResponse;
 import com.example.reservationservice.service.ReservationService;
@@ -81,6 +86,41 @@ class ReservationControllerImplTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.reservationNo").value(11))
 			.andExpect(jsonPath("$.data.status").value("success"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	void testBookReservation_Exception() {
+		ReservationRequest request = new ReservationRequest();
+		request.setCheckIn("01-01-2020");
+		request.setCheckOut("02-01-2020");
+		request.setCity("Mumbai");
+		request.setHotelName("Taj");
+		request.setRoomId(1);
+		List<GuestInfo> guestInfoList = new ArrayList<>();
+		GuestInfo guestInfo = new GuestInfo();
+		guestInfo.setName("test");
+		guestInfo.setPhoneNo(987654321);
+		AddressInfo addressInfo = new AddressInfo();
+		addressInfo.setCity("Delhi");
+		addressInfo.setState("Delhi");
+		addressInfo.setCountry("India");
+		guestInfo.setAddress(addressInfo);
+		guestInfoList.add(guestInfo);
+		request.setGuestInfo(guestInfoList);
+		ReservationResponse resp = new ReservationResponse();
+		resp.setReservationNo(11);
+		resp.setStatus("success");
+		when(reservationService.bookReservation(Mockito.any(ReservationRequest.class))).thenThrow(new ReservationServiceException("Check-in date should be greater than current date"));
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			mockMvc.perform(post("/reservation/reserve").contentType(MediaType.APPLICATION_JSON_VALUE)
+					.content(mapper.writeValueAsString(request)))
+			.andExpect(status().isInternalServerError())
+			.andExpect(result -> assertTrue(result.getResolvedException() instanceof ReservationServiceException))
+			.andExpect(result -> assertEquals("Check-in date should be greater than current date", result.getResolvedException().getMessage()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
